@@ -1024,10 +1024,12 @@ case 2 -&gt; yield 1; //invalid, must not write yield</code></pre>
 <script>
   function openPopin(id) {
     document.getElementById(id).classList.add('open');
+    setTimeout(() => window.refreshLiveSearch?.(), 0);
   }
 
   function closePopin(id) {
     document.getElementById(id).classList.remove('open');
+    setTimeout(() => window.refreshLiveSearch?.(), 0);
   }
 
   document.getElementById('popin').addEventListener('click', function (e) {
@@ -2358,10 +2360,12 @@ hello
 
   function openTextPopin(id) {
     document.getElementById(id).classList.add('open');
+    setTimeout(() => window.refreshLiveSearch?.(), 0);
   }
 
   function closeTextPopin(id) {
     document.getElementById(id).classList.remove('open');
+    setTimeout(() => window.refreshLiveSearch?.(), 0);
   }
 
   document.getElementById('clPopin').addEventListener('click', function (e) {
@@ -2417,7 +2421,44 @@ hello
             const parent = node.parentElement;
             if (!parent || !node.nodeValue.trim()) return false;
             if (pane.contains(parent)) return false;
-            return !parent.closest('script, style, noscript, textarea, input, select, option, button');
+
+            // Never search text belonging to controls / non-rendered document metadata.
+            if (parent.closest('script, style, noscript, textarea, input, select, option, button')) {
+               return false;
+            }
+
+            // Exclude text hidden by itself or by any ancestor.
+            // This catches closed popups (display:none), visibility:hidden,
+            // hidden elements, aria-hidden content, content-visibility:hidden,
+            // and fully transparent containers.
+            let element = parent;
+            while (element && element !== document.documentElement) {
+               const style = window.getComputedStyle(element);
+
+               if (
+                  element.hidden ||
+                  element.getAttribute('aria-hidden') === 'true' ||
+                  style.display === 'none' ||
+                  style.visibility === 'hidden' ||
+                  style.visibility === 'collapse' ||
+                  style.contentVisibility === 'hidden' ||
+                  parseFloat(style.opacity || '1') === 0
+               ) {
+                  return false;
+               }
+
+               element = element.parentElement;
+            }
+
+            // A text node that is really rendered has at least one layout rectangle.
+            // Unlike a viewport check, this still allows Ctrl+F-like searching
+            // elsewhere on the page after scrolling, while excluding closed popups.
+            const range = document.createRange();
+            range.selectNodeContents(node);
+            const rects = Array.from(range.getClientRects());
+            range.detach();
+
+            return rects.some(rect => rect.width > 0 && rect.height > 0);
          }
 
          function highlight(query) {
@@ -2487,6 +2528,14 @@ hello
             current = (current + delta + hits.length) % hits.length;
             activateCurrent(true);
          }
+
+         // Public refresh hook used when popup visibility changes.
+         // If a search is active, results are recalculated from what is visibly rendered now.
+         window.refreshLiveSearch = function () {
+            if (input.value.trim()) {
+               highlight(input.value);
+            }
+         };
 
          input.addEventListener('input', () => highlight(input.value));
          input.addEventListener('keydown', e => {
