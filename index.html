@@ -318,7 +318,77 @@
          }
       </style>
 
-   </head>
+   
+<style id="link-insight-popin-style">
+  /* Only styles the new intermediary link popup. Existing page styling is untouched. */
+  #linkInsightPopin .win95LinkDialog {
+    width: fit-content !important;
+    max-width: calc(100vw - 56px) !important;
+  }
+
+  #linkInsightPopin .win95TitleText {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  #linkInsightPopin .win95LinkBody {
+    width: fit-content !important;
+    max-width: 100% !important;
+  }
+
+  #linkInsightDescription {
+    display: block !important;
+    field-sizing: content !important;
+    width: auto !important;
+    max-width: calc(100vw - 96px) !important;
+    max-height: calc(100vh - 210px) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    resize: none !important;
+    overflow: auto !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-family: "Courier New", monospace !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    border-top: 2px solid #808080 !important;
+    border-left: 2px solid #808080 !important;
+    border-right: 2px solid #ffffff !important;
+    border-bottom: 2px solid #ffffff !important;
+  }
+
+  #linkInsightOpenButton {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px 18px !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+    background: #c0c0c0 !important;
+    color: #000 !important;
+    font-family: "MS Sans Serif", Arial, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    border-top: 2px solid #ffffff !important;
+    border-left: 2px solid #ffffff !important;
+    border-right: 2px solid #404040 !important;
+    border-bottom: 2px solid #404040 !important;
+  }
+
+  #linkInsightOpenButton:active {
+    border-top: 2px solid #404040 !important;
+    border-left: 2px solid #404040 !important;
+    border-right: 2px solid #ffffff !important;
+    border-bottom: 2px solid #ffffff !important;
+  }
+</style>
+
+</head>
    <body >
 
       <div id="liveSearchPane" role="search" aria-label="Search this page">
@@ -2393,7 +2463,131 @@ hello
 </script>
 
    
-      <script id="live-search-script">
+      
+<div id="linkInsightPopin" class="win95Overlay" aria-hidden="true">
+  <div class="win95Dialog win95LinkDialog" role="dialog" aria-modal="true" aria-labelledby="linkInsightTitle">
+    <div class="win95TitleBar">
+      <span id="linkInsightTitle" class="win95TitleText"></span>
+      <button class="win95Close" type="button" onclick="closeLinkInsightPopin()" aria-label="Close">×</button>
+    </div>
+
+    <div class="win95Body win95LinkBody">
+      <textarea id="linkInsightDescription" readonly aria-label="Topic insight"></textarea>
+      <button id="linkInsightOpenButton" type="button">OPEN REFERENCE IN NEW TAB ↗</button>
+    </div>
+  </div>
+</div>
+
+
+<script id="link-insight-popin-script">
+(function () {
+  const popup = document.getElementById('linkInsightPopin');
+  const titleElement = document.getElementById('linkInsightTitle');
+  const descriptionElement = document.getElementById('linkInsightDescription');
+  const openButton = document.getElementById('linkInsightOpenButton');
+
+  let currentLink = '';
+
+  function isClassicNavigatingLink(anchor) {
+    if (!anchor || !anchor.hasAttribute('href')) return false;
+
+    const rawHref = (anchor.getAttribute('href') || '').trim();
+    if (!rawHref || rawHref === '#' || rawHref.startsWith('#')) return false;
+
+    const lowerHref = rawHref.toLowerCase();
+    if (
+      lowerHref.startsWith('javascript:') ||
+      lowerHref.startsWith('mailto:') ||
+      lowerHref.startsWith('tel:')
+    ) {
+      return false;
+    }
+
+    // Preserve all special link behaviors already present in the page.
+    if (anchor.hasAttribute('onclick') || anchor.hasAttribute('download')) return false;
+
+    return true;
+  }
+
+  function autoSizeDescription() {
+    // Modern Chromium uses field-sizing:content. These lines are a fallback
+    // and also keep the textarea height matched to its actual contents.
+    descriptionElement.style.height = 'auto';
+    descriptionElement.style.height = descriptionElement.scrollHeight + 'px';
+  }
+
+  window.openLinkInsightPopin = function (anchor) {
+    const rawTitle = (anchor.textContent || '').replace(/\s+/g, ' ').trim();
+    const title = rawTitle || 'Reference';
+    const resolvedUrl = anchor.href;
+
+    currentLink = resolvedUrl;
+    titleElement.textContent = title;
+
+    // Default content requested: title and URL on separate lines.
+    // Optional data-insight can later append hand-written key insight
+    // without changing this popup mechanism.
+    const extraInsight = (anchor.dataset.insight || '').trim();
+    descriptionElement.value =
+      title + '\n' +
+      resolvedUrl +
+      (extraInsight ? '\n\n' + extraInsight : '');
+
+    popup.classList.add('open');
+    popup.setAttribute('aria-hidden', 'false');
+
+    autoSizeDescription();
+    setTimeout(() => {
+      autoSizeDescription();
+      openButton.focus({ preventScroll: true });
+      window.refreshLiveSearch?.();
+    }, 0);
+  };
+
+  window.closeLinkInsightPopin = function () {
+    popup.classList.remove('open');
+    popup.setAttribute('aria-hidden', 'true');
+    currentLink = '';
+    setTimeout(() => window.refreshLiveSearch?.(), 0);
+  };
+
+  // Intercept only normal navigation anchors. Popup links and placeholders
+  // remain exactly as they already behave.
+  document.addEventListener('click', function (event) {
+    const anchor = event.target.closest && event.target.closest('a[href]');
+    if (!isClassicNavigatingLink(anchor)) return;
+
+    event.preventDefault();
+    window.openLinkInsightPopin(anchor);
+  });
+
+  openButton.addEventListener('click', function () {
+    if (!currentLink) return;
+    window.open(currentLink, '_blank', 'noopener,noreferrer');
+  });
+
+  popup.addEventListener('click', function (event) {
+    if (event.target === popup) {
+      window.closeLinkInsightPopin();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && popup.classList.contains('open')) {
+      window.closeLinkInsightPopin();
+    }
+  });
+
+  window.addEventListener('resize', function () {
+    if (popup.classList.contains('open')) {
+      autoSizeDescription();
+    }
+  });
+})();
+</script>
+
+
+<script id="live-search-script">
       (function () {
          const input = document.getElementById('liveSearchInput');
          const count = document.getElementById('liveSearchCount');
