@@ -483,7 +483,12 @@
                               <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/declaring.html" 
                               data-insight="CERTIFICATION NOTES
 - Any checked exceptions must either be handled using a try block or the method that generates the exception must declare that it throws that exception.
-- The main(String[] args) method is the last point in your program where any unhandled checked exception can bubble up to. After that the exception is thrown to the JVM and the JVM kills the thread."> [Specifying the Exceptions Thrown by a Method]</a>    
+- The main(String[] args) method is the last point in your program where any unhandled checked exception can bubble up to. After that the exception is thrown to the JVM and the JVM kills the thread."> [Specifying the Exceptions Thrown by a Method]</a>
+<a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/finally.html" 
+                              data-insight="CERTIFICATION NOTES
+- A finally block runs when leaving the try, even if the try throws an exception.
+- The main(String[] args) method is the last point in your program where any unhandled checked exception can bubble up to. After that the exception is thrown to the JVM and the JVM kills the thread.
+- Therefore, the exception that propagates outward is the one thrown by finally."> [The finally Block]</a>
                               <span class="title">Handling Exceptions</span>
                            </div>
                            <br><br><br><br><br><br><br>
