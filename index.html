@@ -480,6 +480,10 @@
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/OutOfMemoryError.html">OutOfMemoryError</a>
                               <a href="#" onclick="openTextPopin('clPopin'); return false;">[try-with-resources notes]💬</a>
                               <a href="#" onclick="openTextPopin('checkedUncheckedPopin'); return false;">[Checked vs unchecked exceptions]💬</a>
+                              <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/declaring.html" 
+                              data-insight="CERTIFICATION NOTES
+- Any checked exceptions must either be handled using a try block or the method that generates the exception must declare that it throws that exception.
+- The main(String[] args) method is the last point in your program where any unhandled checked exception can bubble up to. After that the exception is thrown to the JVM and the JVM kills the thread."> [Specifying the Exceptions Thrown by a Method]</a>    
                               <span class="title">Handling Exceptions</span>
                            </div>
                            <br><br><br><br><br><br><br>
