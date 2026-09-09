@@ -411,8 +411,14 @@
                               <a href="https://docs.oracle.com/en/java/javase/15/text-blocks/index.html">[Text Blocks]</a>
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Double.html">Double</a>
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Float.html">Float</a>
-                              <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html"data-insight="CERTIFICATION NOTES
-- There is no reverse() method in String class. It a method of StringBuilder."> String</a>
+                              <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html"data-insight='CERTIFICATION NOTES
+- There is no reverse() method in String class. It a method of StringBuilder.
+-String indexes start at 0.
+    "carpet".substring(0,3) -> "car"
+    "javascript".substring(0,4) -> "java"
+    beginIndex is inclusive; endIndex is exclusive.
+    Invalid indexes throw IndexOutOfBoundsException.
+'> String</a>
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html">StringBuilder</a>
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/MonthDay.html">MonthDay</a>
                               <a href="https://docs.oracle.com/en/java/javase/21/language/text-blocks.html">Text Blocks</a>
@@ -755,6 +761,9 @@
                               <a href="https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html">[Intrinsic Locks and Synchronization]</a>                           
                               <a href="#" onclick="openPopin('popin'); return false;">[Thread State]👀</a>
                               <a href="#" onclick="openTextPopin('thPopin'); return false;">[Deadlock / Starvation / Livelock]💬</a>
+                              <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.html"data-insight='CERTIFICATION NOTES
+- ScopedValue does not implement Closeable.
+'> ScopedValue</a>
                               <span class="title">Managing Concurrent Code Execution</span>
                            </div>
                            <div class="megatile">
