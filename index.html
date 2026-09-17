@@ -525,6 +525,13 @@
 <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.2.5" 
                               data-insight="CERTIFICATION NOTES
 - If more than one member method is both accessible and applicable to a method invocation, the most specific method depending upon the argument is called"> [15.12.2.5. Choosing the Most Specific Method]</a>
+<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Throwable.html#toString()"
+   data-insight="CERTIFICATION NOTES 
+- IO.println(new Exception());&#10;Calls Throwable.toString(); no message means only the exception class is printed.&#10;Prints: java.lang.Exception&#10;
+- IO.println(new Exception(&quot;boom&quot;));&#10;toString() prints the throwable class + &quot;: &quot; + getLocalizedMessage().&#10;Prints: java.lang.Exception: boom&#10;
+- new Exception(&quot;boom&quot;).printStackTrace();&#10;Prints to System.err: toString() first, then the recorded stack trace frames.&#10;Prints:&#10;java.lang.Exception: boom&#10;    at MyClass.main(MyClass.java:3)">
+   [Printing Exceptions: toString() vs printStackTrace()]
+</a>
                               <span class="title">Handling Exceptions</span>
                            </div>
                            <br><br><br><br><br><br><br>
@@ -738,6 +745,37 @@
                               <a href="./java-9-modules-cheat-sheet.pdf">[JPMS Cheat Sheet]📄</a> 
                               <a href="#" onclick="openPopin('popinModules'); return false;">[Modules Hierarchy]👀</a>
                               <a href="#" onclick="openTextPopin('spPopin'); return false;">[Service provider rules]💬</a>
+                              <a href="https://dev.java/learn/modules/automatic-module/" data-insight='CERTIFICATION NOTES
+Modularizing an app with third-party JARs
+
+Example:
+bakeryApp.jar
+   |
+   +--> flourProviders.jar
+   |
+   +--> urssaf.jar
+
+You control only bakeryApp.jar.
+
+1. Make bakeryApp.jar a named module with module-info.java.
+2. Put flourProviders.jar and urssaf.jar on the module path.
+   -> They become automatic modules.
+3. Add requires for the modules directly used by bakeryApp.
+
+module bakery.app {
+    requires flour.providers;
+    requires urssaf;
+}
+
+Rule:
+non-modular JAR + module path
+        -> automatic module
+
+Do not modify third-party JARs just to add module-info.java.
+
+Remember:
+requires names MODULES, not packages.
+'> [Modularizing an app with third-party JARs]</a>
                               <span class="title">Packaging and Deploying Java Code</span>
                            </div>
                            <br><br>
@@ -767,6 +805,10 @@
                               <span class="title">Managing Concurrent Code Execution</span>
                            </div>
                            <div class="megatile">
+                              <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/File.html" data-insight='CERTIFICATION NOTES
+- public boolean mkdir(): Creates the directory named by this abstract pathname.
+- public boolean mkdirs(): Creates the directory named by this abstract pathname, including any necessary but nonexistent parent directories. Note that if this operation fails it may have succeeded in creating some of the necessary parent directories.
+'> File</a>
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html"  ><strong>Files</strong> </a>
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/DataOutputStream.html"  >DataOutputStream </a>
                               <a href="https://docs.oracle.com/javase/tutorial/essential/io/datastreams.html"  >Data Streams </a>
