@@ -834,7 +834,10 @@ requires names MODULES, not packages.
                               <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/StandardCopyOption.html"  >StandardCopyOption</a>
                               <a href="https://docs.oracle.com/javase/8/docs/platform/serialization/spec/serialTOC.html">[Java Object Serialization Specification]</a>
                               <a href="#" onclick="openTextPopin('serializationFieldsPopin'); return false;">  Serialization fields memo 💬</a>
-                              
+                              <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html"
+   data-insight="CERTIFICATION NOTES - SERIALIZABLE &amp; serialVersionUID&#10;&#10;▪️ A Serializable class should explicitly declare a serialVersionUID.&#10;&#10;▪️ Recommended declaration:&#10;private static final long serialVersionUID = 1L;&#10;&#10;▪️ serialVersionUID must be static, final, and of type long.&#10;&#10;▪️ It may use any access modifier, but private is recommended.&#10;&#10;▪️ If the class changes but old serialized objects must remain deserializable, keep the same serialVersionUID value.&#10;&#10;▪️ If serialVersionUID is not explicitly declared, Java computes one automatically from characteristics of the class, such as its fields and implemented interfaces.&#10;&#10;▪️ Old serialized objects may still be deserialized after updating the class by explicitly declaring the same serialVersionUID that was previously generated.&#10;&#10;▪️ You can inspect the generated value with the JDK serialver tool:&#10;serialver MyClass&#10;&#10;▪️ The value can also be obtained using ObjectInputStream.readClassDescriptor().&#10;&#10;EXAM TRAP:&#10;Not declaring serialVersionUID does not mean the class has no serialVersionUID; one is generated automatically.">
+   [Serializable: serialVersionUID]
+</a>
                               <span class="title">Using Java I/O API</span>
                            </div>
                            <br><br>		
